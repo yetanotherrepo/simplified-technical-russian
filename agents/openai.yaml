@@ -1,0 +1,6 @@
+interface:
+  display_name: "Упрощённый технический русский"
+  short_description: "Ясные русские технические тексты на основе ГОСТ"
+  default_prompt: "Используй $simplified-technical-russian, чтобы написать или отредактировать технический текст по-русски без потери смысла."
+policy:
+  allow_implicit_invocation: true
