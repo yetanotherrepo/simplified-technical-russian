@@ -1,0 +1,226 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "negation",
+      "before": "Не удаляйте резервную копию.",
+      "accepted": "Резервную копию не удаляйте.",
+      "rejected": "Удалите резервную копию.",
+      "expected_codes": [
+        "NEGATION_CHANGED"
+      ],
+      "review": "automatic_signal",
+      "criterion": "Сохранён запрет удаления."
+    },
+    {
+      "id": "permission",
+      "before": "Можно перезапустить сервис.",
+      "accepted": "Сервис можно перезапустить.",
+      "rejected": "Необходимо перезапустить сервис.",
+      "expected_codes": [
+        "PERMISSION_CHANGED"
+      ],
+      "review": "automatic_signal",
+      "criterion": "Разрешение не становится обязанностью."
+    },
+    {
+      "id": "obligation",
+      "before": "Необходимо проверить журнал.",
+      "accepted": "Проверить журнал необходимо.",
+      "rejected": "Рекомендуется проверить журнал.",
+      "expected_codes": [
+        "OBLIGATION_CHANGED"
+      ],
+      "review": "automatic_signal",
+      "criterion": "Обязанность не становится рекомендацией."
+    },
+    {
+      "id": "recommendation",
+      "before": "Рекомендуется сохранить журнал.",
+      "accepted": "Журнал рекомендуется сохранить.",
+      "rejected": "Можно сохранить журнал.",
+      "expected_codes": [
+        "RECOMMENDATION_CHANGED"
+      ],
+      "review": "automatic_signal",
+      "criterion": "Рекомендация не равна разрешению."
+    },
+    {
+      "id": "condition",
+      "before": "Если проверка пройдена, продолжите установку.",
+      "accepted": "Продолжите установку, если проверка пройдена.",
+      "rejected": "Продолжите установку.",
+      "expected_codes": [
+        "CONDITION_CHANGED"
+      ],
+      "review": "automatic_signal",
+      "criterion": "Условие успешной проверки сохранено."
+    },
+    {
+      "id": "restriction",
+      "before": "Перезапустите только тестовый сервис.",
+      "accepted": "Только тестовый сервис перезапустите.",
+      "rejected": "Перезапустите сервис.",
+      "expected_codes": [
+        "RESTRICTION_CHANGED"
+      ],
+      "review": "automatic_signal",
+      "criterion": "Область действия ограничена тестовым сервисом."
+    },
+    {
+      "id": "exception",
+      "before": "Удалите файлы, кроме журнала.",
+      "accepted": "Кроме журнала, удалите файлы.",
+      "rejected": "Удалите файлы.",
+      "expected_codes": [
+        "EXCEPTION_CHANGED"
+      ],
+      "review": "automatic_signal",
+      "criterion": "Исключение для журнала сохранено."
+    },
+    {
+      "id": "simultaneous",
+      "before": "Удерживая Shift, нажмите Enter.",
+      "accepted": "Нажмите Enter, удерживая Shift.",
+      "rejected": "Нажмите Shift. Затем нажмите Enter.",
+      "expected_codes": [
+        "SIMULTANEOUS_CHANGED"
+      ],
+      "review": "automatic_signal",
+      "criterion": "Действия одновременны, а не последовательны."
+    },
+    {
+      "id": "number",
+      "before": "Повторите проверку через 5 минут.",
+      "accepted": "Через 5 минут повторите проверку.",
+      "rejected": "Повторите проверку через 15 минут.",
+      "expected_codes": [
+        "NUMBER_CHANGED"
+      ],
+      "review": "automatic_signal",
+      "criterion": "Число минут сохранено."
+    },
+    {
+      "id": "unit",
+      "before": "Подождите 5 минут.",
+      "accepted": "Время ожидания — 5 минут.",
+      "rejected": "Подождите 5 часов.",
+      "expected_codes": [
+        "QUANTITY_CHANGED"
+      ],
+      "review": "automatic_signal",
+      "criterion": "Единица времени сохранена."
+    },
+    {
+      "id": "bound",
+      "before": "Сохраните не более 5 копий.",
+      "accepted": "Не более 5 копий сохраните.",
+      "rejected": "Сохраните не менее 5 копий.",
+      "expected_codes": [
+        "BOUND_CHANGED"
+      ],
+      "review": "automatic_signal",
+      "criterion": "Верхняя граница не превращается в нижнюю."
+    },
+    {
+      "id": "inline_code",
+      "before": "Выполните `tool --dry-run`.",
+      "accepted": "Команда для запуска: `tool --dry-run`.",
+      "rejected": "Выполните `tool --force`.",
+      "expected_codes": [
+        "LITERAL_CHANGED"
+      ],
+      "review": "automatic_signal",
+      "criterion": "Ключ команды сохранён буквально."
+    },
+    {
+      "id": "url",
+      "before": "Откройте https://example.org/help.",
+      "accepted": "Справка: https://example.org/help.",
+      "rejected": "Откройте https://example.org/admin.",
+      "expected_codes": [
+        "LITERAL_CHANGED"
+      ],
+      "review": "automatic_signal",
+      "criterion": "URL не изменён."
+    },
+    {
+      "id": "quote",
+      "before": "Появится сообщение «Доступ запрещён».",
+      "accepted": "Сообщение: «Доступ запрещён».",
+      "rejected": "Появится сообщение «Доступ разрешён».",
+      "expected_codes": [
+        "LITERAL_CHANGED"
+      ],
+      "review": "automatic_signal",
+      "criterion": "Текст сообщения сохранён буквально."
+    },
+    {
+      "id": "task_id",
+      "before": "Проверьте задачу OPS-42.",
+      "accepted": "Задача для проверки: OPS-42.",
+      "rejected": "Проверьте задачу OPS-24.",
+      "expected_codes": [
+        "LITERAL_CHANGED"
+      ],
+      "review": "automatic_signal",
+      "criterion": "Идентификатор задачи сохранён."
+    },
+    {
+      "id": "path",
+      "before": "Откройте /srv/app/config.yaml.",
+      "accepted": "Файл настройки: /srv/app/config.yaml.",
+      "rejected": "Откройте /srv/prod/config.yaml.",
+      "expected_codes": [
+        "LITERAL_CHANGED"
+      ],
+      "review": "automatic_signal",
+      "criterion": "Путь сохранён."
+    },
+    {
+      "id": "unknown_actor",
+      "before": "Заявка согласована.",
+      "accepted": "Согласована заявка.",
+      "rejected": "Администратор согласовал заявку.",
+      "expected_codes": [],
+      "review": "semantic_review",
+      "criterion": "Не добавлен неизвестный исполнитель."
+    },
+    {
+      "id": "status",
+      "before": "Настройка сохранена.",
+      "accepted": "Сохранена настройка.",
+      "rejected": "Сервис работает.",
+      "expected_codes": [],
+      "review": "semantic_review",
+      "criterion": "Сохранение настройки не доказывает работу сервиса."
+    },
+    {
+      "id": "unperformed",
+      "before": "Проверка не выполнена.",
+      "accepted": "Не выполнена проверка.",
+      "rejected": "Проверка не пройдена.",
+      "expected_codes": [],
+      "review": "semantic_review",
+      "criterion": "Отсутствие проверки не означает неуспех проверки."
+    },
+    {
+      "id": "scope_swap",
+      "before": "Не удаляйте журнал. Удалите копию.",
+      "accepted": "Удалите копию. Не удаляйте журнал.",
+      "rejected": "Удалите журнал. Не удаляйте копию.",
+      "expected_codes": [],
+      "review": "semantic_review",
+      "criterion": "Отрицание остаётся у того же действия и объекта."
+    },
+    {
+      "id": "number_binding",
+      "before": "Лимит чтения — 5, записи — 10.",
+      "accepted": "Для чтения лимит — 5, для записи — 10.",
+      "rejected": "Лимит чтения — 10, записи — 5.",
+      "expected_codes": [],
+      "review": "semantic_review",
+      "criterion": "Числа относятся к исходным характеристикам."
+    }
+  ]
+}
