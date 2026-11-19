@@ -9,7 +9,7 @@ import re
 import sys
 
 
-VERSION = "0.2.0"
+VERSION = "0.2.1"
 CYRILLIC = re.compile(r"[А-Яа-яЁё]")
 TOKEN = re.compile(r"[+-]?\d+(?:[.,_]\d+)*|[^\W_]+(?:[-‑][^\W_]+)*", re.UNICODE)
 # Deliberately a Markdown subset, not a full parser. See references/checking.md.
@@ -26,7 +26,7 @@ MARKERS = {
     "PERMISSION": r"\b(?:можно|разрешено|разрешается|допускается)\b",
     "RECOMMENDATION": r"\b(?:рекомендуется|рекомендуем|желательно)\b",
     "CONDITION": r"\b(?:если|при условии)\b",
-    "RESTRICTION": r"\b(?:только|исключительно)\b",
+    "RESTRICTION": r"\b(?:только|лишь|исключительно)\b",
     "EXCEPTION": r"\b(?:кроме|за исключением)\b",
     "SIMULTANEOUS": r"\b(?:одновременно|удерживая)\b",
     "BOUND": r"\b(?:не более|не менее|более|менее|как минимум|как максимум)\b",
@@ -154,6 +154,46 @@ def style_findings(text, glossary=None):
     return findings
 
 
+def restriction_targets(text):
+    """Count short lexical anchors after restrictive particles, ignoring clause order."""
+    # Keep literals atomic so a change from 'only `a`' to 'only `b`' is visible
+    # even when both literals still appear elsewhere. Keep their original case.
+    tokens = []
+    def add_prose(fragment):
+        # For lexical anchors, skip emphasis delimiters at word edges.
+        # Avoid scanning the rest of the paragraph for a closing delimiter.
+        fragment = re.sub(r"(?<!\w)_{1,3}(?=[^\W_])|(?<=[^\W_])_{1,3}(?!\w)", "", fragment)
+        fragment = fragment.replace("*", "")
+        words = re.findall(r"\w+(?:[-‑]\w+)*|[^\w\s]", normalize(fragment))
+        tokens.extend(word for word in words if word not in ("_", "__", "___"))
+
+    end = 0
+    for start, stop, literal in protected_spans(text):
+        add_prose(text[end:start])
+        tokens.append(("literal", literal))
+        end = stop
+    add_prose(text[end:])
+
+    targets = Counter()
+    for index, token in enumerate(tokens):
+        if token not in ("только", "лишь", "исключительно"):
+            continue
+        if index and tokens[index - 1] in ("не", "как"):
+            continue
+        following = tokens[index + 1:index + 3]
+        if not following:
+            continue
+        first = following[0]
+        # Qualifiers such as 'временную' alone cannot distinguish two objects.
+        qualifier = isinstance(first, str) and (
+            first in ("в", "на", "по", "для", "после", "до", "при", "из", "с", "к")
+            or first.endswith(("ый", "ий", "ой", "ая", "яя", "ую", "юю", "ое", "ее",
+                               "ые", "ие", "ых", "их", "ого", "его", "ом", "ем"))
+        )
+        targets[tuple(following if qualifier else following[:1])] += 1
+    return targets
+
+
 def compare_findings(before, after):
     findings = []
     def changed(code, label, left, right):
@@ -162,6 +202,8 @@ def compare_findings(before, after):
                                     "Защита смысла в скилле; поверхностный сигнал, не доказательство ошибки"))
     changed("LITERAL_CHANGED", "Технические литералы или цитаты",
             Counter(x[2] for x in protected_spans(before)), Counter(x[2] for x in protected_spans(after)))
+    changed("RESTRICTION_SCOPE_CHANGED", "Слова после ограничительных частиц",
+            restriction_targets(before), restriction_targets(after))
     clean = []
     for text in (before, after):
         value = normalize(mask_literals(text))

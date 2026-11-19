@@ -44,6 +44,33 @@ class MeaningTests(unittest.TestCase):
                     self.assertEqual(result["semantic_equivalence"], "not_assessed")
                     self.assertTrue(case["criterion"])
 
+    def test_scope_with_same_particle_count(self):
+        for before, after in [
+            ("Только копию удалите после сверки.", "Копию удалите только после сверки."),
+            ("Откройте только временный порт, затем временный файл.",
+             "Откройте временный порт, затем только временный файл."),
+            ("Сравните только __`A`__ с __`B`__.", "Сравните __`A`__ только с __`B`__."),
+            ("Сравните только `A` с `B`.", "Сравните `A` только с `B`."),
+        ]:
+            with self.subTest(before=before):
+                self.assertIn("RESTRICTION_SCOPE_CHANGED", codes(lint.compare_findings(before, after)))
+
+    def test_emphasis_and_only_idiom(self):
+        for delim in ("**", "__", "*"):
+            before = f"Откройте всего лишь {delim}файл{delim}, затем каталог."
+            after = f"Откройте файл, затем всего лишь {delim}каталог{delim}."
+            self.assertIn("RESTRICTION_SCOPE_CHANGED", codes(lint.compare_findings(before, after)))
+            self.assertEqual(lint.compare_findings(before, before.replace(delim, "")), [])
+
+    def test_reordered_equivalent_restrictions(self):
+        before = "Читайте лишь `A` и исключительно после проверки."
+        after = "Только после проверки читайте только `A`."
+        self.assertEqual(lint.compare_findings(before, after), [])
+
+    def test_additive_and_temporal_conjunctions(self):
+        for text in ("Не только таблица, но и индекс.", "Как только появится отчёт."):
+            self.assertFalse(lint.restriction_targets(text))
+
     def test_duplicate_literal_is_not_lost(self):
         self.assertIn("LITERAL_CHANGED", codes(lint.compare_findings("`x` и `x`", "`x`")))
 
